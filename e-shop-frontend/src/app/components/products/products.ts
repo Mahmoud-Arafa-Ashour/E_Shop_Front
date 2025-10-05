@@ -9,7 +9,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule , RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './products.html',
   styleUrl: './products.scss'
 })
@@ -35,39 +35,39 @@ export class ProductsComponent implements OnInit {
   }
 
   loadProducts() {
-  this.isLoading = true;
-  this.errorMessage = '';
+    this.isLoading = true;
+    this.errorMessage = '';
 
-  this.productService.getAllProducts().subscribe({
-    next: (response) => {
-      this.isLoading = false;
+    this.productService.getAllProducts().subscribe({
+      next: (response) => {
+        this.isLoading = false;
 
-      // ✅ Extract the products array safely
-      const products = response.items || response.data || response || [];
+        // Extract the products array safely
+        const products = response.items || response.data || response || [];
 
-      // ✅ Add base URL to imagePath if needed
-      this.products = products.map((p: any) => ({
-        ...p,
-        imagePath: p.imagePath
-          ? `https://localhost:7211${p.imagePath.startsWith('/') ? '' : '/'}${p.imagePath}`
-          : null
-      }));
-    },
-    error: (error) => {
-      this.isLoading = false;
-      this.errorMessage = 'Failed to load products. Please try again.';
-      console.error('Error loading products:', error);
-    }
-  });
-}
-
+        // Add base URL to imagePath if needed
+        this.products = products.map((p: any) => ({
+          ...p,
+          imagePath: p.imagePath
+            ? `https://localhost:7211${p.imagePath.startsWith('/') ? '' : '/'}${p.imagePath}`
+            : null
+        }));
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'Failed to load products. Please try again.';
+        console.error('Error loading products:', error);
+      }
+    });
+  }
 
   viewProduct(productId: number) {
     this.router.navigate(['/product-details', productId]);
   }
 
   editProduct(productId: number) {
-    this.router.navigate(['/product-details', productId, 'edit']);
+    // Navigate to the update product component
+    this.router.navigate(['/update-product', productId]);
   }
 
   deleteProduct(Id: number) {

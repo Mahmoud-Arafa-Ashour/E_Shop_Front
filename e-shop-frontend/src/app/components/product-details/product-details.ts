@@ -5,10 +5,11 @@ import { ProductService } from '../../services/product.service';
 import { AuthService } from '../../services/auth.service';
 import { Product } from '../../models/product.model';
 import { RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-product-details',
   standalone: true,
-  imports: [CommonModule , RouterModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './product-details.html',
   styleUrl: './product-details.scss'
 })
@@ -16,7 +17,6 @@ export class ProductDetailsComponent implements OnInit {
   product: Product | null = null;
   isLoading = false;
   errorMessage = '';
-  isEditMode = false;
   currentUser: any = null;
 
   constructor(
@@ -33,11 +33,6 @@ export class ProductDetailsComponent implements OnInit {
       return;
     }
 
-    // Check if we're in edit mode
-    this.route.url.subscribe(url => {
-      this.isEditMode = url.some(segment => segment.path === 'edit');
-    });
-
     const productId = this.route.snapshot.paramMap.get('id');
     if (productId) {
       this.loadProduct(+productId);
@@ -51,6 +46,15 @@ export class ProductDetailsComponent implements OnInit {
     this.productService.getProduct(id).subscribe({
       next: (product) => {
         this.isLoading = false;
+
+        // Format the image path with full API URL
+        if (product.imagePath) {
+          const formattedPath = product.imagePath.startsWith('http')
+            ? product.imagePath
+            : `https://localhost:7211${product.imagePath.startsWith('/') ? '' : '/'}${product.imagePath}`;
+          product.imagePath = formattedPath;
+        }
+
         this.product = product;
       },
       error: (error) => {
@@ -76,7 +80,8 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   editProduct() {
-    this.router.navigate(['/product-details', this.product?.id, 'edit']);
+    // Navigate to the update product component
+    this.router.navigate(['/update-product', this.product?.id]);
   }
 
   goBack() {

@@ -1,0 +1,216 @@
+<div class="container-fluid">
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">E-Shop</a>
+      <div class="navbar-nav ms-auto">
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+            Welcome, {{ currentUser?.name }}
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Back Button -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <button class="btn btn-outline-secondary" (click)="goBack()">
+          <i class="bi bi-arrow-left me-2"></i>Back to Product Details
+        </button>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h1 class="h2 mb-0">Update Product</h1>
+        <p class="text-muted">Modify the product information below</p>
+      </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading && !product" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading product details...</p>
+    </div>
+
+    <div *ngIf="product" class="row">
+      <div class="col-lg-8">
+        <div class="card shadow">
+          <div class="card-body p-4">
+            <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+              <!-- Product Name -->
+              <div class="mb-4">
+                <label for="name" class="form-label">Product Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  class="form-control"
+                  formControlName="name"
+                  placeholder="Enter product name"
+                  [class.is-invalid]="name?.invalid && name?.touched"
+                />
+                <div *ngIf="name?.invalid && name?.touched" class="invalid-feedback">
+                  <div *ngIf="name?.errors?.['required']">Product name is required</div>
+                  <div *ngIf="name?.errors?.['minlength']">Product name must be at least 2 characters</div>
+                </div>
+              </div>
+
+              <!-- Product Description -->
+              <div class="mb-4">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                  id="description"
+                  class="form-control"
+                  formControlName="description"
+                  rows="4"
+                  placeholder="Enter product description"
+                  [class.is-invalid]="description?.invalid && description?.touched"
+                ></textarea>
+                <div *ngIf="description?.invalid && description?.touched" class="invalid-feedback">
+                  <div *ngIf="description?.errors?.['required']">Description is required</div>
+                  <div *ngIf="description?.errors?.['minlength']">Description must be at least 10 characters</div>
+                </div>
+              </div>
+
+              <!-- Product Price -->
+              <div class="mb-4">
+                <label for="price" class="form-label">Price ($)</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input
+                    type="number"
+                    id="price"
+                    class="form-control"
+                    formControlName="price"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0.01"
+                    [class.is-invalid]="price?.invalid && price?.touched"
+                  />
+                </div>
+                <div *ngIf="price?.invalid && price?.touched" class="invalid-feedback">
+                  <div *ngIf="price?.errors?.['required']">Price is required</div>
+                  <div *ngIf="price?.errors?.['min']">Price must be greater than 0</div>
+                </div>
+              </div>
+
+              <!-- Current Image Display -->
+              <div *ngIf="originalImagePath && !selectedFile" class="mb-4">
+                <label class="form-label">Current Product Image</label>
+                <div class="position-relative d-inline-block">
+                  <img [src]="originalImagePath" alt="Current product image" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                </div>
+                <div class="form-text mt-2">Upload a new image to replace this one</div>
+              </div>
+
+              <!-- Image Upload -->
+              <div class="mb-4">
+                <label for="image" class="form-label">
+                  {{ selectedFile ? 'New Product Image' : 'Update Product Image (Optional)' }}
+                </label>
+                <input
+                  type="file"
+                  id="image"
+                  class="form-control"
+                  accept="image/*"
+                  (change)="onFileSelected($event)"
+                />
+                <div class="form-text">Upload a new image to replace the current one (JPEG, PNG, or GIF, max 5MB)</div>
+              </div>
+
+              <!-- New Image Preview -->
+              <div *ngIf="previewUrl && previewUrl !== originalImagePath" class="mb-4">
+                <label class="form-label">New Image Preview</label>
+                <div class="position-relative d-inline-block">
+                  <img [src]="previewUrl" alt="Preview" class="img-thumbnail" style="max-width: 200px; max-height: 200px;">
+                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" (click)="removeImage()">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Success Message -->
+              <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                {{ successMessage }}
+              </div>
+
+              <!-- Error Message -->
+              <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                {{ errorMessage }}
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-outline-secondary me-md-2" (click)="goBack()">
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  [disabled]="isLoading"
+                >
+                  <span *ngIf="isLoading && product" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                  {{ isLoading && product ? 'Updating Product...' : 'Update Product' }}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help Sidebar -->
+      <div class="col-lg-4">
+        <div class="card shadow mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Update Guidelines</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled mb-0">
+              <li class="mb-2">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                Modify any field you want to update
+              </li>
+              <li class="mb-2">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                Leave image unchanged or upload new one
+              </li>
+              <li class="mb-2">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                All fields are required except image
+              </li>
+              <li class="mb-2">
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                Changes are saved immediately
+              </li>
+              <li>
+                <i class="bi bi-info-circle text-primary me-2"></i>
+                You can cancel anytime
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Product Info Card -->
+        <div class="card shadow">
+          <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Product Information</h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-2"><strong>Product ID:</strong> {{ product.id }}</p>
+            <p class="mb-2"><strong>Current Name:</strong> {{ product.name }}</p>
+            <p class="mb-0"><strong>Current Price:</strong> ${{ product.price | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
