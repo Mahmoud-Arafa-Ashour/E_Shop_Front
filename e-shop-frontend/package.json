@@ -1,0 +1,57 @@
+{
+  "name": "e-shop-frontend",
+  "version": "1.0.0",
+  "description": "Angular frontend for E-Shop application with product management and authentication",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "serve": "ng serve --open",
+    "dev": "ng serve --host 0.0.0.0 --port 4200",
+    "prod": "ng build --configuration production"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.3.3",
+    "@angular/cdk": "^20.3.3",
+    "@angular/common": "^20.3.3",
+    "@angular/compiler": "^20.3.3",
+    "@angular/core": "^20.3.3",
+    "@angular/forms": "^20.3.3",
+    "@angular/material": "^20.3.3",
+    "@angular/platform-browser": "^20.3.3",
+    "@angular/platform-browser-dynamic": "^20.3.3",
+    "@angular/router": "^20.3.3",
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "rxjs": "~8.0.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^20.3.3",
+    "@angular/cli": "^20.3.3",
+    "@angular/compiler-cli": "^20.3.3",
+    "@types/jasmine": "~5.1.0",
+    "@types/node": "^18.7.0",
+    "jasmine-core": "~5.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "typescript": "~5.7.0"
+  },
+  "keywords": [
+    "angular",
+    "e-commerce",
+    "product-management",
+    "authentication",
+    "bootstrap",
+    "typescript"
+  ],
+  "author": "E-Shop Development Team",
+  "license": "MIT"
+}

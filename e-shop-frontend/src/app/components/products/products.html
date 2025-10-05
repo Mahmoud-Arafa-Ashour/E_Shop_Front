@@ -1,0 +1,103 @@
+<div class="container-fluid">
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">E-Shop</a>
+      <div class="navbar-nav ms-auto">
+        <div class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+            Welcome, {{ currentUser?.name }}
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Header Section -->
+    <div class="row mb-4">
+      <div class="col-md-8">
+        <h1 class="h2 mb-0">Products</h1>
+        <p class="text-muted">Manage your product inventory</p>
+      </div>
+      <div class="col-md-4 text-end">
+        <button class="btn btn-primary btn-lg" (click)="addProduct()">
+          <i class="bi bi-plus-circle me-2"></i>Add Product
+        </button>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading products...</p>
+    </div>
+
+    <!-- Products Grid -->
+    <div *ngIf="!isLoading && products.length > 0" class="row">
+      <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of products">
+        <div class="card h-100 shadow-sm">
+          <!-- Product Image -->
+          <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+               style="height: 200px;">
+            <img *ngIf="product.imagePath" 
+                 [src]="product.imagePath" 
+                 [alt]="product.name"
+                 class="img-fluid" 
+                 style="max-height: 100%; object-fit: cover;">
+            <div *ngIf="!product.imagePath" class="text-muted">
+              <i class="bi bi-image fs-1"></i>
+              <p class="mt-2">No Image</p>
+            </div>
+          </div>
+          
+          <div class="card-body d-flex flex-column">
+            <!-- Product Info -->
+            <h5 class="card-title">{{ product.name }}</h5>
+            <p class="card-text text-muted">{{ product.description }}</p>
+            <div class="mt-auto">
+              <h4 class="text-primary mb-3">${{ product.price | number:'1.2-2' }}</h4>
+              
+              <!-- Action Buttons -->
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary" (click)="viewProduct(product.id)">
+                  <i class="bi bi-eye me-2"></i>View Details
+                </button>
+                <div class="btn-group" role="group">
+                  <button class="btn btn-outline-warning" (click)="editProduct(product.id)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-outline-danger" (click)="deleteProduct(product.id)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && products.length === 0" class="text-center py-5">
+      <div class="mb-4">
+        <i class="bi bi-box fs-1 text-muted"></i>
+      </div>
+      <h3 class="text-muted">No Products Found</h3>
+      <p class="text-muted mb-4">Start by adding your first product to the inventory.</p>
+      <button class="btn btn-primary btn-lg" (click)="addProduct()">
+        <i class="bi bi-plus-circle me-2"></i>Add Your First Product
+      </button>
+    </div>
+  </div>
+</div>
